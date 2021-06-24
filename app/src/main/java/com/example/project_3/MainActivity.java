@@ -5,10 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,6 +43,14 @@ public class MainActivity extends AppCompatActivity {
 
         new GetCarMake().execute();
 
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                new GetCarModel().execute();
+            }
+        });
+
+
         for(HashMap<String, String> value : carMakeList){
                 for(Map.Entry entry : value.entrySet()){
                     String key = (String) entry.getKey();
@@ -49,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println(key + " : " + val);
                 }
         }
+
+
 
 
     }
@@ -108,13 +119,32 @@ public class MainActivity extends AppCompatActivity {
                 progressDialog.dismiss();
             }
 
-            //Spinner carMakeSpinner = findViewById(R.id.make_id);
+            ArrayList<String> list_car_make = new ArrayList<String>();
 
+            //Spinner carMakeSpinner = findViewById(R.id.make_id);
+            //carMakeSpinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
+
+            for(int i = 0; i < carMakeList.size(); i++){
+                list_car_make.add(carMakeList.get(i).get("vehicle_make"));
+            }
+
+            for(int i = 0; i < list_car_make.size(); i++){
+                System.out.println(list_car_make.get(i));
+            }
+
+            ArrayAdapter<String> aa = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, list_car_make);
+            spinner.setAdapter(aa);
+
+
+            /*
             SpinnerAdapter spinnerAdapter = new SimpleAdapter(MainActivity.this, carMakeList,
                     R.layout.carlist, new String[] {"vehicle_make"}, new int[]{R.id.make_id});
 
 
             spinner.setAdapter(spinnerAdapter);
+
+             */
+
         }
     }
 }
