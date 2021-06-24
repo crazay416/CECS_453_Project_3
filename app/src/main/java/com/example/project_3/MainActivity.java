@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
                     String key = (String) entry.getKey();
                     String val = (String) entry.getValue();
                     System.out.println(key + " : " + val);
+                    System.out.println("YEEEET");
                 }
             }
         }
