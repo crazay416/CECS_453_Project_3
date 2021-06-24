@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                 progressDialog.dismiss();
             }
 
-            Spinner carMakeSpinner = findViewById(R.id.make_id);
+            //Spinner carMakeSpinner = findViewById(R.id.make_id);
 
             SpinnerAdapter spinnerAdapter = new SimpleAdapter(MainActivity.this, carMakeList,
                     R.layout.carlist, new String[] {"vehicle_make"}, new int[]{R.id.make_id});
