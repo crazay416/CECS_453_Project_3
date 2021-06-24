@@ -5,10 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,9 +21,10 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     private ListView lv;
+    private Spinner spinner;
     private ProgressDialog progressDialog;
 
-    static ArrayList<HashMap<String, String>> carmakeList;
+    static ArrayList<HashMap<String, String>> carMakeList;
 
     private static String urlCarMake = "https://thawing-beach-68207.herokuapp.com/carmakes";
     private static String urlCarModels = "https://thawing-beach-68207.herokuapp.com/carmodelmakes/";
@@ -35,12 +36,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        carmakeList = new ArrayList<>();
+        carMakeList = new ArrayList<>();
 
-        lv = findViewById(R.id.list);
+        spinner = findViewById(R.id.make_id);
 
         new GetCarMake().execute();
 
+        for(HashMap<String, String> value : carMakeList){
+                for(Map.Entry entry : value.entrySet()){
+                    String key = (String) entry.getKey();
+                    String val = (String) entry.getValue();
+                    System.out.println(key + " : " + val);
+                }
+        }
 
 
     }
@@ -77,19 +85,19 @@ public class MainActivity extends AppCompatActivity {
                         String id = d.getString("id");
 
 
-                        HashMap<String, String> carmakemap = new HashMap<>();
+                        HashMap<String, String> carMakeMap = new HashMap<>();
 
-                        carmakemap.put("vehicle_make", carmake);
-                        carmakemap.put("id", id);
+                        carMakeMap.put("vehicle_make", carmake);
+                        carMakeMap.put("id", id);
 
-                        carmakeList.add(carmakemap);
+                        carMakeList.add(carMakeMap);
                     }
                 } catch (JSONException e){
                     e.printStackTrace();
                 }
             }
 
-            return null;
+           return null;
         }
 
         @Override
@@ -100,19 +108,13 @@ public class MainActivity extends AppCompatActivity {
                 progressDialog.dismiss();
             }
 
-            Spinner carmakespinner = findViewById(R.id.make_id);
-            ArrayAdapter<>
+            Spinner carMakeSpinner = findViewById(R.id.make_id);
+
+            SpinnerAdapter spinnerAdapter = new SimpleAdapter(MainActivity.this, carMakeList,
+                    R.layout.carlist, new String[] {"vehicle_make"}, new int[]{R.id.make_id});
 
 
-
-            for(HashMap<String, String> value : carmakeList){
-                for(Map.Entry entry : value.entrySet()){
-                    String key = (String) entry.getKey();
-                    String val = (String) entry.getValue();
-                    System.out.println(key + " : " + val);
-                    System.out.println("YEEEET");
-                }
-            }
+            spinner.setAdapter(spinnerAdapter);
         }
     }
 }
