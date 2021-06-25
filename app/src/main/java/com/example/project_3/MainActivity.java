@@ -273,6 +273,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
 
+
+
                 }
             });
 
@@ -353,7 +355,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                     Intent intent = new Intent(MainActivity.this, Car_Data.class);
                     String message = "abc";
                     Toast.makeText(getApplicationContext(), "Position: " + car_specific_list.get(position), Toast.LENGTH_LONG).show();
-                    intent.putExtra("EXTRAMESSAGE", car_specific_list.get(position));
+                    intent.putExtra("car", car_specific_list.get(position));
                     startActivity(intent);
                     
                 }
