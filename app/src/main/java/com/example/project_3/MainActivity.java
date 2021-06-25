@@ -347,6 +347,20 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
             lv.setAdapter(adapter);
 
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent intent = new Intent(MainActivity.this, Car_Data.class);
+                    String message = "abc";
+                    Toast.makeText(getApplicationContext(), "Position: " + car_specific_list.get(position), Toast.LENGTH_LONG).show();
+                    intent.putExtra("EXTRAMESSAGE", car_specific_list.get(position));
+                    startActivity(intent);
+                    
+                }
+
+            });
+
+/*
             lv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -357,6 +371,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                     //Below is what you had
                 }
             });
+
+ */
 
 //            lv.setOnClickListener(new AdapterView.OnItemClickListener(){
 //
