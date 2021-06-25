@@ -25,8 +25,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private Spinner car_make_spinner;
     private Spinner car_model_spinner;
     private ProgressDialog progressDialog;
-    private OnTaskCompleted listener;
-    private String value;
 
     static ArrayList<HashMap<String, String>> carMakeList;
     static ArrayList<HashMap<String, String>> carModelList;
@@ -184,6 +182,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     }
 
     private class GetCarModel extends AsyncTask<Void, Void, Void>{
+
+
         String car_make_id;
 
 
@@ -257,10 +257,10 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     HashMap<String, String> modelmap = carModelList.get(position);
                     String car_model = modelmap.get("vehicle_make_id");
-                    //new GetCarModel(car_make).execute();
-
-
+                    String model_id = modelmap.get("id");
                     Toast.makeText(getApplicationContext(), "ID: "+ car_model, Toast.LENGTH_SHORT).show();
+                    new GetListCarModel(model_id, car_make_id).execute();
+
                 }
 
                 @Override
@@ -271,5 +271,32 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
         }
     }
+
+    private class GetListCarModel extends AsyncTask<Void, Void, Void>{
+        String model_id;
+        String make_id;
+        String zipcode = "92603";
+
+        public GetListCarModel(String model_id, String make_id){
+            this.model_id = model_id;
+            this.make_id = make_id;
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            System.out.println("MODEL_ID: " + model_id + "| MAKE_ID: " + make_id);
+            //Toast.makeText(getApplicationContext(), "MODEL_ID: " + model_id + "| MAKE_ID: " + make_id, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
 
 }
