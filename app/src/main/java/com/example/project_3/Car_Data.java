@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -24,6 +25,9 @@ public class Car_Data extends AppCompatActivity {
 
     TextView price;
     TextView car_model;
+    TextView description;
+    TextView lastUpdate;
+    View view;
 
 
     @Override
@@ -48,6 +52,9 @@ public class Car_Data extends AppCompatActivity {
         private HashMap<String, String> carInfo = new HashMap<String, String>();
         private String currency;
         private String model;
+        private String carDetails;
+        private String carUpdate;
+        private View carView;
 
         public GetCarDetails(HashMap carinfo){
             this.carInfo = carinfo;
@@ -70,6 +77,8 @@ public class Car_Data extends AppCompatActivity {
                         JSONObject d = jsonArray.getJSONObject(i);
                         currency = d.getString("price");
                         model = carInfo.get("model");
+                        carDetails = d.getString("veh_description");
+                        carUpdate = d.getString("updated_at");
 
 
                     }
@@ -91,6 +100,13 @@ public class Car_Data extends AppCompatActivity {
 
             car_model = findViewById(R.id.makeModel);
             car_model.setText(model);
+
+            description = findViewById(R.id.carSpecs);
+            description.setText(carDetails);
+
+            lastUpdate = findViewById(R.id.lastUpdate);
+            lastUpdate.setText(carUpdate);
+
 
 
 
