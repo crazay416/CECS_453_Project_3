@@ -3,12 +3,15 @@ package com.example.project_3;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -28,10 +31,11 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     static ArrayList<HashMap<String, String>> carMakeList;
     static ArrayList<HashMap<String, String>> carModelList;
+    static ArrayList<HashMap<String, String>> car_specific_list;
 
     private static String urlCarMake = "https://thawing-beach-68207.herokuapp.com/carmakes";
     private static String urlCarModels = "https://thawing-beach-68207.herokuapp.com/carmodelmakes/";
-    private static String urlCarMakeModel = "https://thawing-beach-68207.herokuapp.com/cars/10/20/92603";
+    private static String urlCarMakeModel = "https://thawing-beach-68207.herokuapp.com/cars/";
     private static String urlCarDetail = "https://thawing-beach-68207.herokuapp.com/cars/3484";
 
     @Override
@@ -42,9 +46,12 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
         carMakeList = new ArrayList<>();
         carModelList = new ArrayList<>();
+        car_specific_list = new ArrayList<>();
 
         car_make_spinner = findViewById(R.id.make_id);
         car_model_spinner = findViewById(R.id.model_id);
+        lv = findViewById(R.id.list);
+
 
         //GetCarMake  task = new GetCarMake(this);
         new GetCarMake(this).execute();
@@ -258,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                     HashMap<String, String> modelmap = carModelList.get(position);
                     String car_model = modelmap.get("vehicle_make_id");
                     String model_id = modelmap.get("id");
-                    Toast.makeText(getApplicationContext(), "ID: "+ car_model, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "ID: "+ car_model, Toast.LENGTH_SHORT).show();
                     new GetListCarModel(model_id, car_make_id).execute();
 
                 }
@@ -285,18 +292,71 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            if(car_specific_list.size() != 0){
+                car_specific_list.clear();
+            }
+
+
+            HttpHandler sh = new HttpHandler();
+
+            String jsonStr = sh.makeServiceCall(urlCarMakeModel +  make_id + "/" + model_id + "/" + zipcode );
+
+            if(jsonStr != null){
+                try{
+
+                    //JSONArray jsonArray = new JSONArray(jsonStr);
+                    JSONObject jsonObject = new JSONObject(jsonStr);
+                    JSONArray cars =jsonObject.getJSONArray("lists");
+
+
+                    for(int i = 0; i < cars.length(); i++){
+                        JSONObject d = cars.getJSONObject(i);
+                        String carmodel = d.getString("model");
+                        String car_detail = d.getString("id");
+                        String car_color = d.getString("color");
+
+
+                        HashMap<String, String> carModelMap = new HashMap<>();
+
+                        carModelMap.put("model", carmodel);
+                        carModelMap.put("id", car_detail);
+                        carModelMap.put("color", car_color);
+
+                        car_specific_list.add(carModelMap);
+                    }
+                } catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+
             return null;
         }
 
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            System.out.println("MODEL_ID: " + model_id + "| MAKE_ID: " + make_id);
-            //Toast.makeText(getApplicationContext(), "MODEL_ID: " + model_id + "| MAKE_ID: " + make_id, Toast.LENGTH_SHORT).show();
+
+            if(progressDialog.isShowing()){
+                progressDialog.dismiss();
+            }
+
+
+            ListAdapter adapter = new SimpleAdapter(MainActivity.this, car_specific_list,
+                    R.layout.carlist, new String[] {"model", "id", "color"}, new int[]{
+                    R.id.car, R.id.color, R.id.detail});
+
+            lv.setAdapter(adapter);
+
+            lv.setOnClickListener(new AdapterView.OnItemClickListener(){
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent intent = new Intent(getApplicationContext(), Car_Data.class);
+                    intent.putExtras("car_specific_list",  );
+                    startActivity(intent);
+                }
+            });
+
+                }
         }
     }
-
-
-
-
-}
