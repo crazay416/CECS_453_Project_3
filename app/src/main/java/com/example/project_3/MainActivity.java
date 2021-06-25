@@ -18,7 +18,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
@@ -30,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private String value;
 
     static ArrayList<HashMap<String, String>> carMakeList;
+    static ArrayList<HashMap<String, String>> carModelList;
 
     private static String urlCarMake = "https://thawing-beach-68207.herokuapp.com/carmakes";
     private static String urlCarModels = "https://thawing-beach-68207.herokuapp.com/carmodelmakes/";
@@ -43,8 +43,10 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
 
         carMakeList = new ArrayList<>();
+        carModelList = new ArrayList<>();
 
         car_make_spinner = findViewById(R.id.make_id);
+        car_model_spinner = findViewById(R.id.model_id);
 
         //GetCarMake  task = new GetCarMake(this);
         new GetCarMake(this).execute();
@@ -98,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
         @Override
         protected Void doInBackground(Void... voids) {
+
             HttpHandler sh = new HttpHandler();
 
             String jsonStr = sh.makeServiceCall(urlCarMake);
@@ -159,8 +162,10 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     HashMap<String, String> makemap = carMakeList.get(position);
                     String car_make = makemap.get("id");
+                    new GetCarModel(car_make).execute();
 
-                    Toast.makeText(getApplicationContext(), "ID: "+ car_make, Toast.LENGTH_SHORT).show();
+
+                    //Toast.makeText(getApplicationContext(), "ID: "+ car_make, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -179,10 +184,91 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     }
 
     private class GetCarModel extends AsyncTask<Void, Void, Void>{
+        String car_make_id;
+
+
+        public GetCarModel(String car_make_id){
+            this.car_make_id = car_make_id;
+        }
 
         @Override
         protected Void doInBackground(Void... voids) {
+            if (carModelList.size() != 0){
+                carModelList.clear();
+            }
+
+            HttpHandler sh = new HttpHandler();
+
+            String jsonStr = sh.makeServiceCall(urlCarModels +  car_make_id );
+
+            if(jsonStr != null){
+                try{
+
+                    JSONArray jsonArray = new JSONArray(jsonStr);
+
+                    for(int i = 0; i < jsonArray.length(); i++){
+                        JSONObject d = jsonArray.getJSONObject(i);
+                        String carmodel = d.getString("model");
+                        String id = d.getString("id");
+                        String vehicle_make_id = d.getString("vehicle_make_id");
+
+
+                        HashMap<String, String> carModelMap = new HashMap<>();
+
+                        carModelMap.put("model", carmodel);
+                        carModelMap.put("id", id);
+                        carModelMap.put("vehicle_make_id", vehicle_make_id);
+
+                        carModelList.add(carModelMap);
+                    }
+                } catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result){
+            super.onPostExecute(result);
+
+            if(progressDialog.isShowing()){
+                progressDialog.dismiss();
+            }
+
+            ArrayList<String> list_car_model = new ArrayList<String>();
+
+
+
+            for(int i = 0; i < carModelList.size(); i++){
+                list_car_model.add(carModelList.get(i).get("model"));
+            }
+
+            for(int i = 0; i < list_car_model.size(); i++){
+                System.out.println(list_car_model.get(i));
+            }
+
+            ArrayAdapter<String> aa = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, list_car_model);
+            car_model_spinner.setAdapter(aa);
+
+            car_model_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    HashMap<String, String> modelmap = carModelList.get(position);
+                    String car_model = modelmap.get("vehicle_make_id");
+                    //new GetCarModel(car_make).execute();
+
+
+                    Toast.makeText(getApplicationContext(), "ID: "+ car_model, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
         }
     }
 
