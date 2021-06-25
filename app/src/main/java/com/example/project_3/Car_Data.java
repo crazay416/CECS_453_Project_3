@@ -23,6 +23,7 @@ public class Car_Data extends AppCompatActivity {
     static ArrayList<HashMap<String, String>> carDetails;
 
     TextView price;
+    TextView car_model;
 
 
     @Override
@@ -46,6 +47,7 @@ public class Car_Data extends AppCompatActivity {
 
         private HashMap<String, String> carInfo = new HashMap<String, String>();
         private String currency;
+        private String model;
 
         public GetCarDetails(HashMap carinfo){
             this.carInfo = carinfo;
@@ -67,6 +69,7 @@ public class Car_Data extends AppCompatActivity {
                     for(int i = 0; i < jsonArray.length(); i++){
                         JSONObject d = jsonArray.getJSONObject(i);
                         currency = d.getString("price");
+                        model = carInfo.get("model");
 
 
                     }
@@ -85,6 +88,9 @@ public class Car_Data extends AppCompatActivity {
 
             price = findViewById(R.id.price);
             price.setText(currency);
+
+            car_model = findViewById(R.id.makeModel);
+            car_model.setText(model);
 
 
 
