@@ -347,15 +347,26 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
             lv.setAdapter(adapter);
 
-            lv.setOnClickListener(new AdapterView.OnItemClickListener(){
-
+            lv.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                public void onClick(View v) {
                     Intent intent = new Intent(getApplicationContext(), Car_Data.class);
-                    intent.putExtras("car_specific_list",  );
+                    intent.putExtra("car_specific_list",  car_specific_list);
                     startActivity(intent);
+
+                    //Below is what you had
                 }
             });
+
+//            lv.setOnClickListener(new AdapterView.OnItemClickListener(){
+//
+//                @Override
+//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                    Intent intent = new Intent(getApplicationContext(), Car_Data.class);
+//                    intent.putExtra("car_specific_list",  car_specific_list);
+//                    startActivity(intent);
+//                }
+//            });
 
                 }
         }
