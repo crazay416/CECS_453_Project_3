@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,11 +20,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     private ListView lv;
-    private Spinner spinner;
+    private Spinner car_make_spinner;
+    private Spinner car_model_spinner;
     private ProgressDialog progressDialog;
+    private OnTaskCompleted listener;
+    private String value;
 
     static ArrayList<HashMap<String, String>> carMakeList;
 
@@ -37,34 +41,49 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         carMakeList = new ArrayList<>();
 
-        spinner = findViewById(R.id.make_id);
+        car_make_spinner = findViewById(R.id.make_id);
 
-        new GetCarMake().execute();
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemClickListener(){
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                new GetCarModel().execute();
-            }
-        });
+        //GetCarMake  task = new GetCarMake(this);
+        new GetCarMake(this).execute();
 
 
+
+
+
+
+
+
+
+        /*
+        System.out.println("Hello");
         for(HashMap<String, String> value : carMakeList){
                 for(Map.Entry entry : value.entrySet()){
                     String key = (String) entry.getKey();
                     String val = (String) entry.getValue();
                     System.out.println(key + " : " + val);
                 }
-        }
+        }*/
 
 
 
 
     }
 
+    @Override
+    public void onTaskCompleted(String value) {
+        System.out.println("THIS IS VALUEEE" + value);
+
+    }
+
     private class GetCarMake extends AsyncTask<Void, Void, Void> {
+        public OnTaskCompleted listener;
+
+        public GetCarMake(OnTaskCompleted listener){
+            this.listener = listener;
+        }
 
         @Override
         protected void onPreExecute(){
@@ -111,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
            return null;
         }
 
+
         @Override
         protected void onPostExecute(Void result){
             super.onPostExecute(result);
@@ -121,8 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
             ArrayList<String> list_car_make = new ArrayList<String>();
 
-            //Spinner carMakeSpinner = findViewById(R.id.make_id);
-            //carMakeSpinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
+
 
             for(int i = 0; i < carMakeList.size(); i++){
                 list_car_make.add(carMakeList.get(i).get("vehicle_make"));
@@ -133,18 +152,38 @@ public class MainActivity extends AppCompatActivity {
             }
 
             ArrayAdapter<String> aa = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, list_car_make);
-            spinner.setAdapter(aa);
+            car_make_spinner.setAdapter(aa);
+
+            car_make_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    HashMap<String, String> makemap = carMakeList.get(position);
+                    String car_make = makemap.get("id");
+
+                    Toast.makeText(getApplicationContext(), "ID: "+ car_make, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
 
 
-            /*
-            SpinnerAdapter spinnerAdapter = new SimpleAdapter(MainActivity.this, carMakeList,
-                    R.layout.carlist, new String[] {"vehicle_make"}, new int[]{R.id.make_id});
+            //listener.onTaskCompleted(list_car_make.get(0));
 
 
-            spinner.setAdapter(spinnerAdapter);
 
-             */
 
         }
     }
+
+    private class GetCarModel extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            return null;
+        }
+    }
+
 }
