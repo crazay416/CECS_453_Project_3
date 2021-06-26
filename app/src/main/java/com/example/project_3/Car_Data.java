@@ -39,9 +39,11 @@ public class Car_Data extends AppCompatActivity {
     View view;
     Context context;
 
+    /*
     public Car_Data(Context context){
         this.context = context;
     }
+     */
 
 
 
@@ -116,6 +118,7 @@ public class Car_Data extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
 
+
             carPicture = findViewById(R.id.carPic);
 
             try {
@@ -124,6 +127,8 @@ public class Car_Data extends AppCompatActivity {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
+
+
 //            Drawable carPic = Car_Data.LoadImageFromWebOperations(carImage);
 //            carPicture.setImageDrawable(carPic);
 
