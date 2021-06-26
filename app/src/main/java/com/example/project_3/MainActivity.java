@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_select_car);
 
 
         carMakeList = new ArrayList<>();
@@ -51,6 +51,13 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         car_make_spinner = findViewById(R.id.make_id);
         car_model_spinner = findViewById(R.id.model_id);
         lv = findViewById(R.id.list);
+
+        if (findViewById(R.id.car_details_fragment) != null){
+            Toast.makeText(getApplicationContext(), "CAR DETAIL IS TRUE", Toast.LENGTH_LONG).show();
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "CAR DETAIL IS NOT TRUE", Toast.LENGTH_LONG).show();
+        }
 
 
         //GetCarMake  task = new GetCarMake(this);
