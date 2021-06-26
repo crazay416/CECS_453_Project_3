@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
@@ -44,8 +43,8 @@
     <fragment
         android:id="@+id/car_details_fragment"
         android:name="com.example.project_3.Car_Data_Fragment"
-        android:layout_width="1089dp"
-        android:layout_height="866dp"
+        android:layout_width="830dp"
+        android:layout_height="661dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.462"
