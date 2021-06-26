@@ -37,11 +37,15 @@ public class Car_Data extends AppCompatActivity {
     TextView lastUpdate;
     ImageView carPicture;
     View view;
-    Context context;
-
-    public Car_Data(Context context){
-        this.context = context;
-    }
+//    Context context;
+//
+//    public Car_Data(){
+//        this.context = context;
+//    }
+//
+//    public Car_Data(Context context){
+//        this.context = context;
+//    }
 
 
 
@@ -57,7 +61,7 @@ public class Car_Data extends AppCompatActivity {
 
 
 
-        new GetCarDetails(context, carInfo).execute();
+        new GetCarDetails(carInfo).execute();
 
     }
 
@@ -72,11 +76,11 @@ public class Car_Data extends AppCompatActivity {
         private String carUpdate;
         private String carImage;
         private View carView;
-        private Context context;
+//        private Context context;
 
-        public GetCarDetails(Context context, HashMap carinfo){
+        public GetCarDetails(HashMap carinfo){
             this.carInfo = carinfo;
-            this.context = context;
+//            this.context = context;
         }
 
 
@@ -120,7 +124,7 @@ public class Car_Data extends AppCompatActivity {
 
             try {
                 URL imageURL1 = new URL(carImage);
-                Glide.with(context).load(imageURL1).into(carPicture);
+                Glide.with(getApplicationContext()).load(imageURL1).into(carPicture);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
