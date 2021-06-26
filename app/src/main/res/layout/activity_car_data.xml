@@ -46,7 +46,7 @@
         android:textSize="20sp"/>
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/carPic"
         android:layout_width="136dp"
         android:layout_height="145dp"
         app:layout_constraintBottom_toBottomOf="parent"
