@@ -3,16 +3,24 @@ package com.example.project_3;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -27,7 +35,19 @@ public class Car_Data extends AppCompatActivity {
     TextView car_model;
     TextView description;
     TextView lastUpdate;
-    View view;
+    ImageView carPicture;
+    ImageView view;
+
+//    Context context;
+//
+//    public Car_Data(){
+//        this.context = context;
+//    }
+//
+//    public Car_Data(Context context){
+//        this.context = context;
+//    }
+
 
 
     @Override
@@ -49,16 +69,22 @@ public class Car_Data extends AppCompatActivity {
 
     private class GetCarDetails extends AsyncTask<Void, Void, Void>{
 
+
         private HashMap<String, String> carInfo = new HashMap<String, String>();
         private String currency;
         private String model;
         private String carDetails;
         private String carUpdate;
+        private String carImage;
         private View carView;
+//        private Context context;
 
         public GetCarDetails(HashMap carinfo){
             this.carInfo = carinfo;
+//            this.context = context;
         }
+
+
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -79,7 +105,7 @@ public class Car_Data extends AppCompatActivity {
                         model = carInfo.get("model");
                         carDetails = d.getString("veh_description");
                         carUpdate = d.getString("updated_at");
-
+                        carImage = d.getString("image_url");
 
                     }
                 } catch (JSONException e){
@@ -94,6 +120,16 @@ public class Car_Data extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
 
+            carPicture = findViewById(R.id.carPic);
+
+            try {
+                URL imageURL1 = new URL(carImage);
+                Glide.with(getApplicationContext()).load(imageURL1).into(carPicture);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+//            Drawable carPic = Car_Data.LoadImageFromWebOperations(carImage);
+//            carPicture.setImageDrawable(carPic);
 
             price = findViewById(R.id.price);
             price.setText(currency);
@@ -107,6 +143,8 @@ public class Car_Data extends AppCompatActivity {
             lastUpdate = findViewById(R.id.lastUpdate);
             lastUpdate.setText(carUpdate);
 
+            view = findViewById(R.id.carPic);
+            view.setImageResource(R.drawable.car_image);
 
 
 
@@ -114,4 +152,5 @@ public class Car_Data extends AppCompatActivity {
 
 
         }
+
 }

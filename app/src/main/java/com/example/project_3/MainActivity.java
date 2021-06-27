@@ -1,6 +1,7 @@
 package com.example.project_3;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -28,20 +29,24 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private Spinner car_make_spinner;
     private Spinner car_model_spinner;
     private ProgressDialog progressDialog;
+    private boolean mTwoPane = false;
+    private Car_Data_Fragment car_data_fragment;
+
 
     static ArrayList<HashMap<String, String>> carMakeList;
     static ArrayList<HashMap<String, String>> carModelList;
     static ArrayList<HashMap<String, String>> car_specific_list;
 
+
     private static String urlCarMake = "https://thawing-beach-68207.herokuapp.com/carmakes";
     private static String urlCarModels = "https://thawing-beach-68207.herokuapp.com/carmodelmakes/";
     private static String urlCarMakeModel = "https://thawing-beach-68207.herokuapp.com/cars/";
-    private static String urlCarDetail = "https://thawing-beach-68207.herokuapp.com/cars/3484";
+    private static String urlCarDetail = "https://thawing-beach-68207.herokuapp.com/cars/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_select_car);
 
 
         carMakeList = new ArrayList<>();
@@ -52,27 +57,14 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         car_model_spinner = findViewById(R.id.model_id);
         lv = findViewById(R.id.list);
 
-
-        //GetCarMake  task = new GetCarMake(this);
+        if (findViewById(R.id.car_details_fragment) != null){
+            mTwoPane = true;
+            //Toast.makeText(getApplicationContext(), "CAR DETAIL IS TRUE", Toast.LENGTH_LONG).show();
+        }
         new GetCarMake(this).execute();
 
 
 
-
-
-
-
-
-
-        /*
-        System.out.println("Hello");
-        for(HashMap<String, String> value : carMakeList){
-                for(Map.Entry entry : value.entrySet()){
-                    String key = (String) entry.getKey();
-                    String val = (String) entry.getValue();
-                    System.out.println(key + " : " + val);
-                }
-        }*/
 
 
 
@@ -170,7 +162,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                     new GetCarModel(car_make).execute();
 
 
-                    //Toast.makeText(getApplicationContext(), "ID: "+ car_make, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -178,9 +169,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
                 }
             });
-
-
-            //listener.onTaskCompleted(list_car_make.get(0));
 
 
 
@@ -265,7 +253,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                     HashMap<String, String> modelmap = carModelList.get(position);
                     String car_model = modelmap.get("vehicle_make_id");
                     String model_id = modelmap.get("id");
-                    //Toast.makeText(getApplicationContext(), "ID: "+ car_model, Toast.LENGTH_SHORT).show();
                     new GetListCarModel(model_id, car_make_id).execute();
 
                 }
@@ -306,7 +293,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             if(jsonStr != null){
                 try{
 
-                    //JSONArray jsonArray = new JSONArray(jsonStr);
                     JSONObject jsonObject = new JSONObject(jsonStr);
                     JSONArray cars =jsonObject.getJSONArray("lists");
 
@@ -325,7 +311,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                         carModelMap.put("color", car_color);
 
                         car_specific_list.add(carModelMap);
+
                     }
+
                 } catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -352,11 +340,19 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             lv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(MainActivity.this, Car_Data.class);
-                    String message = "abc";
-                    Toast.makeText(getApplicationContext(), "Position: " + car_specific_list.get(position), Toast.LENGTH_LONG).show();
-                    intent.putExtra("car", car_specific_list.get(position));
-                    startActivity(intent);
+                    if(mTwoPane){
+                        String frag_id = car_specific_list.get(position).get("id");
+                        String frag_model = car_specific_list.get(position).get("model");
+                        String frag_color = car_specific_list.get(position).get("color");
+                        new GetCarFragment(frag_id, frag_model).execute();
+                    }
+                    else {
+                        Intent intent = new Intent(MainActivity.this, Car_Data.class);
+                        String message = "abc";
+                        Toast.makeText(getApplicationContext(), "Position: " + car_specific_list.get(position), Toast.LENGTH_LONG).show();
+                        intent.putExtra("car", car_specific_list.get(position));
+                        startActivity(intent);
+                    }
                     
                 }
 
@@ -364,4 +360,60 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
                 }
         }
+    private class GetCarFragment extends AsyncTask<Void, Void, Void>{
+        String car_id;
+        String currency;
+        String model;
+        String carDetails;
+        String carUpdate;
+
+        GetCarFragment(String car_id, String model){
+            this.car_id = car_id;
+            this.model = model;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            HttpHandler sh = new HttpHandler();
+
+            String jsonStr = sh.makeServiceCall(urlCarDetail + car_id);
+
+            if(jsonStr != null){
+                try{
+
+                    JSONObject jsonObject;
+
+                    JSONArray jsonArray = new JSONArray(jsonStr);
+
+                    for(int i = 0; i < jsonArray.length(); i++){
+                        JSONObject d = jsonArray.getJSONObject(i);
+                        currency = d.getString("price");
+                        carDetails = d.getString("veh_description");
+                        carUpdate = d.getString("updated_at");
+                    }
+                } catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+
+            if(progressDialog.isShowing()){
+                progressDialog.dismiss();
+            }
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            car_data_fragment = Car_Data_Fragment.newInstance(currency, model, carDetails, carUpdate);
+            transaction.replace(R.id.car_details_fragment, car_data_fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+
+        }
+
     }
+}
