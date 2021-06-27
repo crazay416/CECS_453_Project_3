@@ -61,33 +61,10 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             mTwoPane = true;
             //Toast.makeText(getApplicationContext(), "CAR DETAIL IS TRUE", Toast.LENGTH_LONG).show();
         }
-        /*
-        else{
-            Toast.makeText(getApplicationContext(), "CAR DETAIL IS NOT TRUE", Toast.LENGTH_LONG).show();
-        }
-         */
-
-
-        //GetCarMake  task = new GetCarMake(this);
         new GetCarMake(this).execute();
 
 
 
-
-
-
-
-
-
-        /*
-        System.out.println("Hello");
-        for(HashMap<String, String> value : carMakeList){
-                for(Map.Entry entry : value.entrySet()){
-                    String key = (String) entry.getKey();
-                    String val = (String) entry.getValue();
-                    System.out.println(key + " : " + val);
-                }
-        }*/
 
 
 
@@ -185,7 +162,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                     new GetCarModel(car_make).execute();
 
 
-                    //Toast.makeText(getApplicationContext(), "ID: "+ car_make, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -193,9 +169,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
                 }
             });
-
-
-            //listener.onTaskCompleted(list_car_make.get(0));
 
 
 
@@ -280,7 +253,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                     HashMap<String, String> modelmap = carModelList.get(position);
                     String car_model = modelmap.get("vehicle_make_id");
                     String model_id = modelmap.get("id");
-                    //Toast.makeText(getApplicationContext(), "ID: "+ car_model, Toast.LENGTH_SHORT).show();
                     new GetListCarModel(model_id, car_make_id).execute();
 
                 }
@@ -321,7 +293,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             if(jsonStr != null){
                 try{
 
-                    //JSONArray jsonArray = new JSONArray(jsonStr);
                     JSONObject jsonObject = new JSONObject(jsonStr);
                     JSONArray cars =jsonObject.getJSONArray("lists");
 
@@ -340,9 +311,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                         carModelMap.put("color", car_color);
 
                         car_specific_list.add(carModelMap);
-
-
-
 
                     }
 
@@ -377,12 +345,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                         String frag_model = car_specific_list.get(position).get("model");
                         String frag_color = car_specific_list.get(position).get("color");
                         new GetCarFragment(frag_id, frag_model).execute();
-                        //FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                        //car_data_fragment = Car_Data_Fragment.newInstance(frag_id, frag_model, frag_color);
-                        //transaction.replace(R.id.car_details_fragment, car_data_fragment);
-                        //transaction.addToBackStack(null);
-                        //transaction.commit();
-
                     }
                     else {
                         Intent intent = new Intent(MainActivity.this, Car_Data.class);

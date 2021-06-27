@@ -36,7 +36,8 @@ public class Car_Data extends AppCompatActivity {
     TextView description;
     TextView lastUpdate;
     ImageView carPicture;
-    View view;
+    ImageView view;
+
 //    Context context;
 //
 //    public Car_Data(){
@@ -106,7 +107,6 @@ public class Car_Data extends AppCompatActivity {
                         carUpdate = d.getString("updated_at");
                         carImage = d.getString("image_url");
 
-
                     }
                 } catch (JSONException e){
                     e.printStackTrace();
@@ -143,6 +143,8 @@ public class Car_Data extends AppCompatActivity {
             lastUpdate = findViewById(R.id.lastUpdate);
             lastUpdate.setText(carUpdate);
 
+            view = findViewById(R.id.carPic);
+            view.setImageResource(R.drawable.car_image);
 
 
 

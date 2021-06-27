@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -24,6 +25,7 @@ public class Car_Data_Fragment extends Fragment {
     TextView carmodel;
     TextView carDetails;
     TextView carUpdate;
+    ImageView carView;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -95,6 +97,10 @@ public class Car_Data_Fragment extends Fragment {
 
         carUpdate = root.findViewById(R.id.lastUpdate);
         carUpdate.setText(mParam4);
+
+        carView = root.findViewById(R.id.carPic);
+        carView.setImageResource(R.drawable.car_image);
+
 
 
 
