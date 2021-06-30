@@ -25,6 +25,7 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
+
     private ListView lv;
     private Spinner car_make_spinner;
     private Spinner car_model_spinner;
@@ -57,9 +58,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         car_model_spinner = findViewById(R.id.model_id);
         lv = findViewById(R.id.list);
 
+        // If the screen resolution is big enough, set boolean true, else keep it false
         if (findViewById(R.id.car_details_fragment) != null){
             mTwoPane = true;
-            //Toast.makeText(getApplicationContext(), "CAR DETAIL IS TRUE", Toast.LENGTH_LONG).show();
         }
         new GetCarMake(this).execute();
 
@@ -77,6 +78,10 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     }
 
+    /*
+        GetCarMake will retrieve the specific car make base on the users request by
+        using the HTTP Handler
+     */
     private class GetCarMake extends AsyncTask<Void, Void, Void> {
         public OnTaskCompleted listener;
 
@@ -94,7 +99,11 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             progressDialog.show();
         }
 
-
+        /*
+            Behind the scenes, doInBackground is creating an HttpHandler object to get all the carmakes
+            with the restful API. It first stores the carmakes into a hasmhmap with its vehicle_make
+            and id and then stores that hashmap in an ArrayList of hashmap
+         */
         @Override
         protected Void doInBackground(Void... voids) {
 
@@ -104,9 +113,10 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
             if(jsonStr != null){
                 try{
-                    //JSONObject jsonObject = new JSONObject(jsonStr);
                     JSONObject jsonObject;
 
+
+                    // Stored the information in a jsonArray
                     JSONArray jsonArray = new JSONArray(jsonStr);
 
                     for(int i = 0; i < jsonArray.length(); i++){
@@ -131,6 +141,12 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         }
 
 
+        /*
+            In the onPostExecute, we retrieve the make of the car and store it inside an arraylist.
+            We then create an Array Adapter and store the car_make_list alongside with the spinner
+            When the user selects the car_make, the vehicle that was clicked will send its id into another
+            Async Class to find its model
+        */
         @Override
         protected void onPostExecute(Void result){
             super.onPostExecute(result);
@@ -176,6 +192,10 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         }
     }
 
+    /*
+        GetCarMake will retrieve the specific car model base on the users request of their car_make
+        using the HTTP Handler
+     */
     private class GetCarModel extends AsyncTask<Void, Void, Void>{
 
 
@@ -186,6 +206,11 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             this.car_make_id = car_make_id;
         }
 
+        /*
+            Behind the scenes, doInBackground is creating an HttpHandler object to get all the car_models
+            with the restful API. It first stores the car_models into a hasmhmap with its vehicle_make,
+            model, and id and then stores that hashmap in an ArrayList of hashmap
+         */
         @Override
         protected Void doInBackground(Void... voids) {
             if (carModelList.size() != 0){
@@ -224,6 +249,14 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             return null;
         }
 
+
+
+        /*
+            In the onPostExecute, we retrieve the model of the car and store it inside an arraylist.
+            We then create an Array Adapter and store the car_model_list alongside with the spinner
+            When the user selects the car_model, the vehicle that was clicked will send its id into another
+            Async Class to display all of that specific car model
+        */
         @Override
         protected void onPostExecute(Void result){
             super.onPostExecute(result);
@@ -268,6 +301,10 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         }
     }
 
+    /*
+        GetListCarModel will retrieve the specific list of that car model based on the users
+        request of their car_make using the HTTP Handler
+     */
     private class GetListCarModel extends AsyncTask<Void, Void, Void>{
         String model_id;
         String make_id;
@@ -279,6 +316,12 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
         }
 
+
+        /*
+            Behind the scenes, doInBackground is creating an HttpHandler object to get all the car_models
+            list with the restful API. It first stores the car_models into a hasmhmap with its color,
+            model, and id and then stores that hashmap in an ArrayList of hashmap
+         */
         @Override
         protected Void doInBackground(Void... voids) {
             if(car_specific_list.size() != 0){
@@ -322,6 +365,13 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             return null;
         }
 
+        /*
+            In the onPostExecute, we retrieve the model of the car and store it inside an arraylist.
+            We then create a List Adapter and store the car_specific_list. We assign the color, model,
+            and id of that vehicle to the corresponding elements in the carlist layout. Depending
+            on the size of the screen, if it is bigger than 900p, then it will load the information
+            to a fragment called Car_Data_Fragment. Else, it will create a new intent.
+        */
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
@@ -360,6 +410,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
                 }
         }
+
     private class GetCarFragment extends AsyncTask<Void, Void, Void>{
         String car_id;
         String currency;
@@ -367,11 +418,16 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         String carDetails;
         String carUpdate;
 
+        // Get the Car_id and model from the GetListCarModel class
         GetCarFragment(String car_id, String model){
             this.car_id = car_id;
             this.model = model;
         }
 
+        /*
+            We create an HTTP Handler to grab the information from the restful API. Information that
+            contains the price, vehicle description, and its last update.
+        */
         @Override
         protected Void doInBackground(Void... voids) {
             HttpHandler sh = new HttpHandler();
@@ -399,6 +455,10 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             return null;
         }
 
+        /*
+            In the onPostExecute, we use the information that was obtain from the doInBackground,
+            and send it to the fragment class
+        */
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);

@@ -53,6 +53,10 @@ public class Car_Data_Fragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment Car_Data_Fragment.
      */
+    /*
+        When the car fragment is created, it takes 4 parameters, currency, model, carDetails
+        and Carupdate
+    */
     // TODO: Rename and change types and number of parameters
     public static Car_Data_Fragment newInstance(String param1, String param2, String param3, String param4) {
         Car_Data_Fragment fragment = new Car_Data_Fragment();
@@ -75,6 +79,11 @@ public class Car_Data_Fragment extends Fragment {
             mParam4 = getArguments().getString(ARG_PARAM4);
         }
     }
+
+    /*
+        We then load the 4 arguments in its given location from the xml file and also
+        creating TextViews and ImageViews to make this possible
+    */
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -100,12 +109,6 @@ public class Car_Data_Fragment extends Fragment {
 
         carView = root.findViewById(R.id.carPic);
         carView.setImageResource(R.drawable.car_image);
-
-
-
-
-
-
 
         return root;
     }

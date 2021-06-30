@@ -38,15 +38,6 @@ public class Car_Data extends AppCompatActivity {
     ImageView carPicture;
     ImageView view;
 
-//    Context context;
-//
-//    public Car_Data(){
-//        this.context = context;
-//    }
-//
-//    public Car_Data(Context context){
-//        this.context = context;
-//    }
 
 
 
@@ -57,6 +48,9 @@ public class Car_Data extends AppCompatActivity {
 
         carDetails = new ArrayList<>();
 
+        /*
+        Recieve the information that was passed from the MainActivity class
+         */
         Intent intent = getIntent();
         HashMap<String, String> carInfo = (HashMap<String, String>)intent.getSerializableExtra("car");
 
@@ -67,6 +61,10 @@ public class Car_Data extends AppCompatActivity {
     }
 
 
+    /*
+        GetCarDetails will retrieve the informaiton that it needs from the API to create a
+        description of the specific vehicle that was selected
+    */
     private class GetCarDetails extends AsyncTask<Void, Void, Void>{
 
 
@@ -75,17 +73,17 @@ public class Car_Data extends AppCompatActivity {
         private String model;
         private String carDetails;
         private String carUpdate;
-        private String carImage;
-        private View carView;
-//        private Context context;
 
         public GetCarDetails(HashMap carinfo){
             this.carInfo = carinfo;
-//            this.context = context;
         }
 
 
-
+        /*
+            Creates an http Handler to grab the information that is needed from the restfulk API
+            It uses the Car Id alongisde the urlCarDetail to get the car's specific informaiton
+            It gets the price, model, description and when it was last updated
+        */
         @Override
         protected Void doInBackground(Void... voids) {
             HttpHandler sh = new HttpHandler();
@@ -95,8 +93,6 @@ public class Car_Data extends AppCompatActivity {
             if(jsonStr != null){
                 try{
 
-                    JSONObject jsonObject;
-
                     JSONArray jsonArray = new JSONArray(jsonStr);
 
                     for(int i = 0; i < jsonArray.length(); i++){
@@ -105,7 +101,6 @@ public class Car_Data extends AppCompatActivity {
                         model = carInfo.get("model");
                         carDetails = d.getString("veh_description");
                         carUpdate = d.getString("updated_at");
-                        carImage = d.getString("image_url");
 
                     }
                 } catch (JSONException e){
@@ -116,20 +111,17 @@ public class Car_Data extends AppCompatActivity {
             return null;
         }
 
+        /*
+            In the onPostExecute, it declares the EditViews and TextViews to the given id in
+            the xml file. We then initialize the them by giving it the values from the doInBackground
+
+        */
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
 
             carPicture = findViewById(R.id.carPic);
 
-            try {
-                URL imageURL1 = new URL(carImage);
-                Glide.with(getApplicationContext()).load(imageURL1).into(carPicture);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-//            Drawable carPic = Car_Data.LoadImageFromWebOperations(carImage);
-//            carPicture.setImageDrawable(carPic);
 
             price = findViewById(R.id.price);
             price.setText(currency);
